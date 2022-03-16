@@ -1,13 +1,14 @@
 import redis
-from flask import Flask
 from collections import namedtuple
+from flask import Flask
+
+app = Flask(__name__)
 
 RESULTS = namedtuple("RESULTS", "pw bf_unique set_unique bf_unique_count set_unique_count")
 
 BLOOM_FILTER_NAME = "bloom"
 SET_NAME = ""
 
-app = Flask(__name__)
 r_client = redis.Redis(host='localhost', port=6379, db=0)
 
 
@@ -50,11 +51,16 @@ GRANDMA_PASSWORDS = [
     'turtle1234',
 ]
 
+ITEM_ADDED_SUCCESSFULLY_BLOOM_FILTER = 1
 ITEM_FOUND_IN_BLOOM_FILTER = 1
-ITEM_FOUND_IN_BLOOM_FILTER = 0
+ITEM_NOT_FOUND_IN_BLOOM_FILTER = 0
+
+ITEM_ADDED_SUCCESSFULLY_SET = 1
+ITEM_FOUND_IN_SET = 1
+ITEM_NOT_FOUND_IN_SET = 0
 
 
-def add_boom_filter(bloom_filter, item):
+def add_bloom_filter(bloom_filter, item):
     """
     Adds item to specified bloom filter.
     Throws AssertionError on None value args
@@ -84,8 +90,8 @@ def add_password_bloom_filter(bf, pw):
     Throws:
     AssertionError on None value args
     """
-    result = add_boom_filter(bf, pw)
-    return str(result == 0)
+    result = add_bloom_filter(bf, pw)
+    return str(result == ITEM_ADDED_SUCCESSFULLY_BLOOM_FILTER)
 
 
 def is_in_bloom_filter(bloom_filter, item):
@@ -110,7 +116,7 @@ def is_unique_bloom_filter(bloom_filter, item):
     Converts Redis results to boolean representing if item was unique (aka not found).
     """
     result = is_in_bloom_filter(bloom_filter, item)
-    return result == 0
+    return result == ITEM_NOT_FOUND_IN_BLOOM_FILTER
 
 
 @app.route("/check_unique_bloom_filter/<bf>/<pw>")
@@ -140,7 +146,7 @@ def add_password_set(set_name, pw):
     str(bool) indicating success
     """
     result = add_set(set_name, pw)
-    return str(result == 0)
+    return str(result == ITEM_ADDED_SUCCESSFULLY_SET)
 
 
 def is_in_set(set_name, item):
@@ -154,7 +160,7 @@ def is_unique_set(set_name, item):
     Converts Redis results to boolean representing if item was unique (aka not found).
     """
     result = is_in_set(set_name, item)
-    return result == 0
+    return result == ITEM_NOT_FOUND_IN_SET
 
 
 @app.route("/check_unique_set/<pw>", defaults={"pw": None})
@@ -181,7 +187,7 @@ def check_password():
     check_results = list()
     for password in GRANDMA_PASSWORDS:
         unique_to_bf = is_unique_bloom_filter(grandma_bloom_filter, password)
-        add_boom_filter(grandma_bloom_filter, password)
+        add_bloom_filter(grandma_bloom_filter, password)
         if unique_to_bf:
             bf_unique_count += 1
         unique_to_set = is_unique_set(grandma_set, password)

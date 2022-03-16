@@ -1,0 +1,15 @@
+click==8.0.4
+Deprecated==1.2.13
+Flask==2.0.3
+hiredis==2.0.0
+itsdangerous==2.1.1
+Jinja2==3.0.3
+MarkupSafe==2.1.1
+packaging==21.3
+pyparsing==3.0.7
+redis==4.1.4
+rmtest==0.7.0
+singleton-decorator==1.0.0
+six==1.16.0
+Werkzeug==2.0.3
+wrapt==1.14.0
