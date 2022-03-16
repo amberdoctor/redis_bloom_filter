@@ -12,6 +12,7 @@ from flasker.check_passwords import (
     check_passwords_fixed,
     check_passwords_fixed_error_rate_fixed,
 )
+from flasker.reset_app import reset_app
 
 
 def create_app():
@@ -71,5 +72,10 @@ def create_app():
     @app.route("/check_grandmas_passwords_fixed_error_rate_adjusted")
     def check_grandmas_passwords_fixed_error_rate_adjusted():
         return check_passwords_fixed_error_rate_fixed()
+
+    @app.route("/reset")
+    def reset():
+        """ Quick and dirty way to reset Redis for the demo. """
+        return str(reset_app())
 
     return app
