@@ -20,6 +20,7 @@ def create_app():
 
     @app.route("/")
     def hello():
+        """Just a Hi so that the base url isn't blank."""
         return "Hello Bloom Filter Talk Participants!"
 
     @app.route("/add_password_bloom_filter/<bf>/<pw>")
@@ -40,7 +41,12 @@ def create_app():
     @app.route("/check_unique_bloom_filter/<bf>/<pw>")
     def check_password_unique_bloom_filter(bf, pw):
         """
-        Returns str(bool) indicating if item is unique (aka not found).
+        Keyword arguments:
+        bf -- the bloom filter
+        pw -- the password to check
+
+        Return:
+        str(bool) indicating if item is unique (aka not found).
         String formatting chosen for route display.
         """
         return str(is_unique_bloom_filter(bf, pw))
@@ -53,24 +59,37 @@ def create_app():
         pw -- the password to add
 
         Return:
-        str(bool) indicating success
+        str(bool) indicating item was added.
+        False may indicate that item had previously been added.
         """
         return str(add_to_set_format_result(set_name, pw))
 
     @app.route("/check_unique_set/<set_name>/<pw>")
     def check_password_unique_set(set_name, pw):
+        """
+        Keyword arguments:
+        set_name -- the set name
+        pw -- the password to check
+
+        Return:
+        str(bool) indicating if item is unique (aka not found).
+        String formatting chosen for route display.
+        """
         return str(is_unique_set(set_name, pw))
 
     @app.route("/check_grandmas_passwords")
     def check_grandmas_passwords():
+        """Check grandma's original password list."""
         return check_passwords()
 
     @app.route("/check_grandmas_passwords_fixed")
     def check_grandmas_passwords_fixed():
+        """Check grandma's improved password list with 20% error rate."""
         return check_passwords_fixed()
 
     @app.route("/check_grandmas_passwords_fixed_error_rate_adjusted")
     def check_grandmas_passwords_fixed_error_rate_adjusted():
+        """Check grandma's improved password list with .1% error rate."""
         return check_passwords_fixed_error_rate_fixed()
 
     @app.route("/reset")
